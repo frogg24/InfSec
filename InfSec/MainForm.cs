@@ -156,13 +156,39 @@ namespace InfSec
         {
             if (!isAdmin) return;
 
-            SetRestrictionsDialog setRestrictionsDialog = new SetRestrictionsDialog();
-            if (setRestrictionsDialog.ShowDialog() == DialogResult.OK)
+            // Проверяем, что есть выделенная строка в списке пользователей
+            if (lstUsers.SelectedRows.Count == 0 || lstUsers.SelectedRows[0].Cells["username"].Value == null)
             {
-                string username = setRestrictionsDialog.Username;
-                bool restrictionsEnabled = setRestrictionsDialog.RestrictionsEnabled;
-                DatabaseManager.SetUserRestrictions(username, restrictionsEnabled);
-                MessageBox.Show($"Ограничения для пользователя {username} {(restrictionsEnabled ? "включены" : "отключены")}", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Выберите пользователя из списка", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Получаем имя пользователя из выделенной строки
+            string username = lstUsers.SelectedRows[0].Cells["username"].Value.ToString();
+
+            if (!DatabaseManager.UserExists(username))
+            {
+                MessageBox.Show("Пользователь не найден", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Проверяем текущее состояние blocked
+            bool isRestrictionsOn = DatabaseManager.GetUserRestrictions(username);
+
+            string actionText = isRestrictionsOn ? "выключить ограничения" : "включить ограничения";
+
+            DialogResult result = MessageBox.Show(
+                $"Вы действительно хотите {actionText} пользователю {username}?", "Управление блокировкой",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question
+            );
+
+            if (result == DialogResult.Yes)
+            {
+                DatabaseManager.SetUserRestrictions(username, !isRestrictionsOn);
+                LoadUsersList();
+
+                string status = isRestrictionsOn ? "ограничения для пароля сняты" : "ограничения для пароля включены";
+                MessageBox.Show($"Для пользователя {username} {status}", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
