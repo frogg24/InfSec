@@ -28,68 +28,73 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
-            this.txtPasswordPhrase = new System.Windows.Forms.TextBox();
-            this.btnOK = new System.Windows.Forms.Button();
-            this.btnCancel = new System.Windows.Forms.Button();
-            this.SuspendLayout();
+            label1 = new Label();
+            txtPasswordPhrase = new TextBox();
+            btnOK = new Button();
+            btnCancel = new Button();
+            SuspendLayout();
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 25);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(112, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Парольная фраза:";
+            label1.AutoSize = true;
+            label1.Location = new Point(13, 17);
+            label1.Margin = new Padding(4, 0, 4, 0);
+            label1.Name = "label1";
+            label1.Size = new Size(136, 20);
+            label1.TabIndex = 0;
+            label1.Text = "Парольная фраза:";
             // 
             // txtPasswordPhrase
             // 
-            this.txtPasswordPhrase.Location = new System.Drawing.Point(130, 22);
-            this.txtPasswordPhrase.Name = "txtPasswordPhrase";
-            this.txtPasswordPhrase.PasswordChar = '*';
-            this.txtPasswordPhrase.Size = new System.Drawing.Size(200, 20);
-            this.txtPasswordPhrase.TabIndex = 1;
+            txtPasswordPhrase.Location = new Point(157, 14);
+            txtPasswordPhrase.Margin = new Padding(4, 5, 4, 5);
+            txtPasswordPhrase.Name = "txtPasswordPhrase";
+            txtPasswordPhrase.PasswordChar = '*';
+            txtPasswordPhrase.Size = new Size(286, 27);
+            txtPasswordPhrase.TabIndex = 1;
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(130, 57);
-            this.btnOK.Name = "btnOK";
-            this.btnOK.Size = new System.Drawing.Size(75, 23);
-            this.btnOK.TabIndex = 2;
-            this.btnOK.Text = "ОК";
-            this.btnOK.UseVisualStyleBackColor = true;
-            this.btnOK.Click += new System.EventHandler(this.btnOK_Click);
+            btnOK.Location = new Point(235, 51);
+            btnOK.Margin = new Padding(4, 5, 4, 5);
+            btnOK.Name = "btnOK";
+            btnOK.Size = new Size(100, 35);
+            btnOK.TabIndex = 2;
+            btnOK.Text = "ОК";
+            btnOK.UseVisualStyleBackColor = true;
+            btnOK.Click += btnOK_Click;
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(255, 57);
-            this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 3;
-            this.btnCancel.Text = "Отмена";
-            this.btnCancel.UseVisualStyleBackColor = true;
-            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            btnCancel.Location = new Point(343, 51);
+            btnCancel.Margin = new Padding(4, 5, 4, 5);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Size = new Size(100, 35);
+            btnCancel.TabIndex = 3;
+            btnCancel.Text = "Отмена";
+            btnCancel.UseVisualStyleBackColor = true;
+            btnCancel.Click += btnCancel_Click;
             // 
             // PasswordPhraseForm
             // 
-            this.AcceptButton = this.btnOK;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(342, 92);
-            this.Controls.Add(this.btnCancel);
-            this.Controls.Add(this.btnOK);
-            this.Controls.Add(this.txtPasswordPhrase);
-            this.Controls.Add(this.label1);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "PasswordPhraseForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Ввод парольной фразы";
-            this.Load += new System.EventHandler(this.PasswordPhraseForm_Load);
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AcceptButton = btnOK;
+            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(456, 103);
+            Controls.Add(btnCancel);
+            Controls.Add(btnOK);
+            Controls.Add(txtPasswordPhrase);
+            Controls.Add(label1);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            Margin = new Padding(4, 5, 4, 5);
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "PasswordPhraseForm";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Ввод парольной фразы";
+            Load += PasswordPhraseForm_Load;
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 

@@ -35,8 +35,6 @@
             пользователиToolStripMenuItem = new ToolStripMenuItem();
             menuAddUser = new ToolStripMenuItem();
             menuViewUsers = new ToolStripMenuItem();
-            menuBlockUser = new ToolStripMenuItem();
-            menuSetRestrictions = new ToolStripMenuItem();
             настройкиToolStripMenuItem = new ToolStripMenuItem();
             menuChangeMinLength = new ToolStripMenuItem();
             menuChangeExpiry = new ToolStripMenuItem();
@@ -44,9 +42,12 @@
             menuAbout = new ToolStripMenuItem();
             statusStrip1 = new StatusStrip();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
-            lstUsers = new ListBox();
+            lstUsers = new DataGridView();
+            menuBlockUser = new ToolStripMenuItem();
+            menuSetRestrictions = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)lstUsers).BeginInit();
             SuspendLayout();
             // 
             // menuStrip1
@@ -56,7 +57,7 @@
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Padding = new Padding(8, 3, 0, 3);
-            menuStrip1.Size = new Size(477, 30);
+            menuStrip1.Size = new Size(917, 30);
             menuStrip1.TabIndex = 0;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -83,7 +84,7 @@
             // 
             // пользователиToolStripMenuItem
             // 
-            пользователиToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { menuAddUser, menuViewUsers, menuBlockUser, menuSetRestrictions });
+            пользователиToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { menuAddUser, menuViewUsers });
             пользователиToolStripMenuItem.Name = "пользователиToolStripMenuItem";
             пользователиToolStripMenuItem.Size = new Size(122, 24);
             пользователиToolStripMenuItem.Text = "Пользователи";
@@ -91,34 +92,20 @@
             // menuAddUser
             // 
             menuAddUser.Name = "menuAddUser";
-            menuAddUser.Size = new Size(402, 26);
+            menuAddUser.Size = new Size(346, 26);
             menuAddUser.Text = "Добавить пользователя";
             menuAddUser.Click += menuAddUser_Click;
             // 
             // menuViewUsers
             // 
             menuViewUsers.Name = "menuViewUsers";
-            menuViewUsers.Size = new Size(402, 26);
+            menuViewUsers.Size = new Size(346, 26);
             menuViewUsers.Text = "Просмотреть список пользователей";
             menuViewUsers.Click += menuViewUsers_Click;
             // 
-            // menuBlockUser
-            // 
-            menuBlockUser.Name = "menuBlockUser";
-            menuBlockUser.Size = new Size(402, 26);
-            menuBlockUser.Text = "Блокировать/разблокировать пользователя";
-            menuBlockUser.Click += menuBlockUser_Click;
-            // 
-            // menuSetRestrictions
-            // 
-            menuSetRestrictions.Name = "menuSetRestrictions";
-            menuSetRestrictions.Size = new Size(402, 26);
-            menuSetRestrictions.Text = "Установить ограничения";
-            menuSetRestrictions.Click += menuSetRestrictions_Click;
-            // 
             // настройкиToolStripMenuItem
             // 
-            настройкиToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { menuChangeMinLength, menuChangeExpiry });
+            настройкиToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { menuChangeMinLength, menuChangeExpiry, menuBlockUser, menuSetRestrictions });
             настройкиToolStripMenuItem.Name = "настройкиToolStripMenuItem";
             настройкиToolStripMenuItem.Size = new Size(98, 24);
             настройкиToolStripMenuItem.Text = "Настройки";
@@ -126,14 +113,14 @@
             // menuChangeMinLength
             // 
             menuChangeMinLength.Name = "menuChangeMinLength";
-            menuChangeMinLength.Size = new Size(366, 26);
+            menuChangeMinLength.Size = new Size(402, 26);
             menuChangeMinLength.Text = "Изменить минимальную длину пароля";
             menuChangeMinLength.Click += menuChangeMinLength_Click;
             // 
             // menuChangeExpiry
             // 
             menuChangeExpiry.Name = "menuChangeExpiry";
-            menuChangeExpiry.Size = new Size(366, 26);
+            menuChangeExpiry.Size = new Size(402, 26);
             menuChangeExpiry.Text = "Изменить срок действия пароля";
             menuChangeExpiry.Click += menuChangeExpiry_Click;
             // 
@@ -158,7 +145,7 @@
             statusStrip1.Location = new Point(0, 683);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Padding = new Padding(1, 0, 19, 0);
-            statusStrip1.Size = new Size(477, 26);
+            statusStrip1.Size = new Size(917, 26);
             statusStrip1.TabIndex = 1;
             statusStrip1.Text = "statusStrip1";
             // 
@@ -170,17 +157,39 @@
             // 
             // lstUsers
             // 
-            lstUsers.FormattingEnabled = true;
+            lstUsers.AllowUserToAddRows = false;
+            lstUsers.AllowUserToDeleteRows = false;
+            lstUsers.BackgroundColor = SystemColors.ButtonHighlight;
+            lstUsers.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             lstUsers.Location = new Point(12, 33);
+            lstUsers.MultiSelect = false;
             lstUsers.Name = "lstUsers";
-            lstUsers.Size = new Size(453, 644);
+            lstUsers.ReadOnly = true;
+            lstUsers.RowHeadersVisible = false;
+            lstUsers.RowHeadersWidth = 51;
+            lstUsers.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            lstUsers.Size = new Size(893, 647);
             lstUsers.TabIndex = 2;
+            // 
+            // menuBlockUser
+            // 
+            menuBlockUser.Name = "menuBlockUser";
+            menuBlockUser.Size = new Size(402, 26);
+            menuBlockUser.Text = "Блокировать/разблокировать пользователя";
+            menuBlockUser.Click += this.menuBlockUser_Click;
+            // 
+            // menuSetRestrictions
+            // 
+            menuSetRestrictions.Name = "menuSetRestrictions";
+            menuSetRestrictions.Size = new Size(402, 26);
+            menuSetRestrictions.Text = "Установить ограничения";
+            menuSetRestrictions.Click += this.menuSetRestrictions_Click;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(477, 709);
+            ClientSize = new Size(917, 709);
             Controls.Add(lstUsers);
             Controls.Add(statusStrip1);
             Controls.Add(menuStrip1);
@@ -194,6 +203,7 @@
             menuStrip1.PerformLayout();
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)lstUsers).EndInit();
             ResumeLayout(false);
             PerformLayout();
 
@@ -217,6 +227,8 @@
         private System.Windows.Forms.ToolStripMenuItem menuAbout;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
-        private ListBox lstUsers;
+        private DataGridView lstUsers;
+        private ToolStripMenuItem menuBlockUser;
+        private ToolStripMenuItem menuSetRestrictions;
     }
 }

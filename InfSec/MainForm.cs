@@ -51,7 +51,14 @@ namespace InfSec
         {
             DataTable users = DatabaseManager.GetAllUsers();
             lstUsers.DataSource = users;
-            lstUsers.DisplayMember = "username";
+            lstUsers.Columns["username"].HeaderText = "Имя пользователя";
+            lstUsers.Columns["blocked"].HeaderText = "Блокировка";
+            lstUsers.Columns["restrictions_enabled"].HeaderText = "Условие пароля";
+            lstUsers.Columns["min_length"].HeaderText = "Минимальная длина пароля";
+            lstUsers.Columns["expiry_months"].HeaderText = "Срок действия пароля ";
+            lstUsers.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            lstUsers.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            lstUsers.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
         }
 
         private void menuExit_Click(object sender, EventArgs e)
@@ -106,15 +113,15 @@ namespace InfSec
         private void menuBlockUser_Click(object sender, EventArgs e)
         {
             if (!isAdmin) return;
-
-            if (lstUsers.SelectedItem == null)
+            // Проверяем, есть ли выбранная строка
+            if (lstUsers.SelectedRows.Count == 0 || lstUsers.SelectedRows[0].Cells["username"].Value == null)
             {
                 MessageBox.Show("Выберите пользователя из списка", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            System.Data.DataRowView row = (System.Data.DataRowView)lstUsers.SelectedItem;
-            string usernameToBlock = row["username"].ToString();
+            // Получаем значение из ячейки "username" выбранной строки
+            string usernameToBlock = lstUsers.SelectedRows[0].Cells["username"].Value.ToString();
 
             if (!DatabaseManager.UserExists(usernameToBlock))
             {

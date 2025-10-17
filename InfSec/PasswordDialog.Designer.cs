@@ -39,7 +39,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(16, 41);
+            label1.Location = new Point(16, 21);
             label1.Margin = new Padding(4, 0, 4, 0);
             label1.Name = "label1";
             label1.Size = new Size(115, 20);
@@ -49,34 +49,34 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(16, 85);
+            label2.Location = new Point(16, 56);
             label2.Margin = new Padding(4, 0, 4, 0);
             label2.Name = "label2";
-            label2.Size = new Size(179, 20);
+            label2.Size = new Size(124, 20);
             label2.TabIndex = 1;
-            label2.Text = "Подтверждение пароля:";
+            label2.Text = "Подтверждение:";
             // 
             // txtPassword1
             // 
-            txtPassword1.Location = new Point(203, 34);
+            txtPassword1.Location = new Point(148, 14);
             txtPassword1.Margin = new Padding(4, 5, 4, 5);
             txtPassword1.Name = "txtPassword1";
             txtPassword1.PasswordChar = '*';
-            txtPassword1.Size = new Size(235, 27);
+            txtPassword1.Size = new Size(290, 27);
             txtPassword1.TabIndex = 2;
             // 
             // txtPassword2
             // 
-            txtPassword2.Location = new Point(203, 80);
+            txtPassword2.Location = new Point(148, 51);
             txtPassword2.Margin = new Padding(4, 5, 4, 5);
             txtPassword2.Name = "txtPassword2";
             txtPassword2.PasswordChar = '*';
-            txtPassword2.Size = new Size(235, 27);
+            txtPassword2.Size = new Size(290, 27);
             txtPassword2.TabIndex = 3;
             // 
             // btnOK
             // 
-            btnOK.Location = new Point(203, 134);
+            btnOK.Location = new Point(230, 88);
             btnOK.Margin = new Padding(4, 5, 4, 5);
             btnOK.Name = "btnOK";
             btnOK.Size = new Size(100, 35);
@@ -87,7 +87,7 @@
             // 
             // btnCancel
             // 
-            btnCancel.Location = new Point(340, 134);
+            btnCancel.Location = new Point(338, 88);
             btnCancel.Margin = new Padding(4, 5, 4, 5);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(100, 35);
@@ -101,7 +101,7 @@
             AcceptButton = btnOK;
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(456, 188);
+            ClientSize = new Size(456, 136);
             Controls.Add(btnCancel);
             Controls.Add(btnOK);
             Controls.Add(txtPassword2);
