@@ -39,15 +39,18 @@ namespace InfSec
                 return;
             }
 
-            // Проверяем требования к паролю
-            if (!ValidatePasswordRequirements(newPassword1))
+            if (DatabaseManager.GetUserRestrictions(username))
             {
-                MessageBox.Show("Пароль не соответствует требованиям:\n" +
-                                "- Наличие цифр\n" +
-                                "- Наличие знаков препинания\n" +
-                                "- Наличие знаков арифметических операций",
-                                "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                // Проверяем требования к паролю
+                if (!ValidatePasswordRequirements(newPassword1))
+                {
+                    MessageBox.Show("Пароль не соответствует требованиям:\n" +
+                                    "- Наличие цифр\n" +
+                                    "- Наличие знаков препинания\n" +
+                                    "- Наличие знаков арифметических операций",
+                                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
             }
 
             DatabaseManager.SetUserPassword(username, newPassword1);
