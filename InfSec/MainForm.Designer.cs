@@ -218,8 +218,6 @@
         private System.Windows.Forms.ToolStripMenuItem пользователиToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem menuAddUser;
         private System.Windows.Forms.ToolStripMenuItem menuViewUsers;
-        private System.Windows.Forms.ToolStripMenuItem menuBlockUser;
-        private System.Windows.Forms.ToolStripMenuItem menuSetRestrictions;
         private System.Windows.Forms.ToolStripMenuItem настройкиToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem menuChangeMinLength;
         private System.Windows.Forms.ToolStripMenuItem menuChangeExpiry;
