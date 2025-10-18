@@ -39,6 +39,14 @@ namespace InfSec
                 return;
             }
 
+            int minLength = DatabaseManager.GetUserMinLength(username);
+            // Проверяем, если минимальная длина больше нуля, то проверяем длину нового пароля
+            if (minLength > 0 && newPassword1.Length < minLength)
+            {
+                MessageBox.Show($"Пароль должен быть не короче {minLength} символов", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             if (DatabaseManager.GetUserRestrictions(username))
             {
                 // Проверяем требования к паролю

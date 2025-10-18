@@ -398,6 +398,21 @@ namespace InfSec
             }
         }
 
-        
+        public static int GetUserMinLength(string username)
+        {
+            using (var connection = new SQLiteConnection($"Data Source={currentDbPath};Version=3;"))
+            {
+                connection.Open();
+                string sql = "SELECT min_length FROM users WHERE username = @username";
+                using (var command = new SQLiteCommand(sql, connection))
+                {
+                    command.Parameters.AddWithValue("@username", username);
+                    var result = command.ExecuteScalar();
+                    if (result == null || result == DBNull.Value)
+                        return 0;
+                    return Convert.ToInt32(result);
+                }
+            }
+        }
     }
 }

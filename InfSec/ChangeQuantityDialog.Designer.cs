@@ -1,6 +1,6 @@
 ﻿namespace InfSec
 {
-    partial class ChangeExpiryDialog
+    partial class ChangeQuantityDialog
     {
         /// <summary>
         /// Required designer variable.
@@ -28,53 +28,33 @@
         /// </summary>
         private void InitializeComponent()
         {
-            label1 = new Label();
-            txtUsername = new TextBox();
             label2 = new Label();
-            txtExpiryMonths = new TextBox();
+            newQuantity = new TextBox();
             btnOK = new Button();
             btnCancel = new Button();
             SuspendLayout();
             // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(16, 18);
-            label1.Margin = new Padding(4, 0, 4, 0);
-            label1.Name = "label1";
-            label1.Size = new Size(55, 20);
-            label1.TabIndex = 0;
-            label1.Text = "Логин:";
-            // 
-            // txtUsername
-            // 
-            txtUsername.Location = new Point(75, 14);
-            txtUsername.Margin = new Padding(4, 5, 4, 5);
-            txtUsername.Name = "txtUsername";
-            txtUsername.Size = new Size(265, 27);
-            txtUsername.TabIndex = 1;
-            // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(16, 56);
+            label2.Location = new Point(13, 12);
             label2.Margin = new Padding(4, 0, 4, 0);
             label2.Name = "label2";
-            label2.Size = new Size(208, 20);
+            label2.Size = new Size(207, 20);
             label2.TabIndex = 2;
-            label2.Text = "Срок действия пароля (мес):";
+            label2.Text = "Новое значение параметра:";
             // 
-            // txtExpiryMonths
+            // newQuantity
             // 
-            txtExpiryMonths.Location = new Point(232, 51);
-            txtExpiryMonths.Margin = new Padding(4, 5, 4, 5);
-            txtExpiryMonths.Name = "txtExpiryMonths";
-            txtExpiryMonths.Size = new Size(108, 27);
-            txtExpiryMonths.TabIndex = 3;
+            newQuantity.Location = new Point(228, 9);
+            newQuantity.Margin = new Padding(4, 5, 4, 5);
+            newQuantity.Name = "newQuantity";
+            newQuantity.Size = new Size(118, 27);
+            newQuantity.TabIndex = 3;
             // 
             // btnOK
             // 
-            btnOK.Location = new Point(123, 88);
+            btnOK.Location = new Point(138, 46);
             btnOK.Margin = new Padding(4, 5, 4, 5);
             btnOK.Name = "btnOK";
             btnOK.Size = new Size(100, 35);
@@ -85,7 +65,7 @@
             // 
             // btnCancel
             // 
-            btnCancel.Location = new Point(240, 88);
+            btnCancel.Location = new Point(246, 46);
             btnCancel.Margin = new Padding(4, 5, 4, 5);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new Size(100, 35);
@@ -94,23 +74,21 @@
             btnCancel.UseVisualStyleBackColor = true;
             btnCancel.Click += btnCancel_Click;
             // 
-            // ChangeExpiryDialog
+            // ChangeQuantityDialog
             // 
             AcceptButton = btnOK;
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(359, 139);
+            ClientSize = new Size(359, 95);
             Controls.Add(btnCancel);
             Controls.Add(btnOK);
-            Controls.Add(txtExpiryMonths);
+            Controls.Add(newQuantity);
             Controls.Add(label2);
-            Controls.Add(txtUsername);
-            Controls.Add(label1);
             FormBorderStyle = FormBorderStyle.FixedSingle;
             Margin = new Padding(4, 5, 4, 5);
             MaximizeBox = false;
             MinimizeBox = false;
-            Name = "ChangeExpiryDialog";
+            Name = "ChangeQuantityDialog";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Изменение срока действия пароля";
             ResumeLayout(false);
@@ -119,11 +97,8 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox txtUsername;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox txtExpiryMonths;
+        private System.Windows.Forms.TextBox newQuantity;
         private System.Windows.Forms.Button btnOK;
         private System.Windows.Forms.Button btnCancel;
     }

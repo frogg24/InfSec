@@ -196,11 +196,27 @@ namespace InfSec
         {
             if (!isAdmin) return;
 
-            ChangeMinLengthDialog changeMinLengthDialog = new ChangeMinLengthDialog();
-            if (changeMinLengthDialog.ShowDialog() == DialogResult.OK)
+            // Проверяем, что есть выделенная строка в списке пользователей
+            if (lstUsers.SelectedRows.Count == 0 || lstUsers.SelectedRows[0].Cells["username"].Value == null)
             {
-                string username = changeMinLengthDialog.Username;
-                int minLength = changeMinLengthDialog.MinLength;
+                MessageBox.Show("Выберите пользователя из списка", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Получаем имя пользователя из выделенной строки
+            string username = lstUsers.SelectedRows[0].Cells["username"].Value.ToString();
+
+            if (!DatabaseManager.UserExists(username))
+            {
+                MessageBox.Show("Пользователь не найден", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Показываем диалог для ввода новой минимальной длины
+            ChangeQuantityDialog paramDialog = new ChangeQuantityDialog(username, "minlength");
+            if (paramDialog.ShowDialog() == DialogResult.OK)
+            {
+                int minLength = paramDialog.Value;
                 DatabaseManager.SetUserMinLength(username, minLength);
                 LoadUsersList();
                 MessageBox.Show($"Минимальная длина пароля для пользователя {username} установлена в {minLength}", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -211,11 +227,27 @@ namespace InfSec
         {
             if (!isAdmin) return;
 
-            ChangeExpiryDialog changeExpiryDialog = new ChangeExpiryDialog();
-            if (changeExpiryDialog.ShowDialog() == DialogResult.OK)
+            // Проверяем, что есть выделенная строка в списке пользователей
+            if (lstUsers.SelectedRows.Count == 0 || lstUsers.SelectedRows[0].Cells["username"].Value == null)
             {
-                string username = changeExpiryDialog.Username;
-                int expiryMonths = changeExpiryDialog.ExpiryMonths;
+                MessageBox.Show("Выберите пользователя из списка", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Получаем имя пользователя из выделенной строки
+            string username = lstUsers.SelectedRows[0].Cells["username"].Value.ToString();
+
+            if (!DatabaseManager.UserExists(username))
+            {
+                MessageBox.Show("Пользователь не найден", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Показываем диалог для ввода нового срока действия
+            ChangeQuantityDialog paramDialog = new ChangeQuantityDialog(username, "expiry");
+            if (paramDialog.ShowDialog() == DialogResult.OK)
+            {
+                int expiryMonths = paramDialog.Value;
                 DatabaseManager.SetUserExpiry(username, expiryMonths);
                 LoadUsersList();
                 MessageBox.Show($"Срок действия пароля для пользователя {username} установлен в {expiryMonths} месяцев", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
