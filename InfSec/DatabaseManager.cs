@@ -13,6 +13,7 @@ namespace InfSec
         private static string tempDbPath = "temp_users.db";
         private static string currentDbPath = "";
         private static string currentPasswordPhrase = "";
+        private const int SALT_SIZE = 8; // Размер соли для DES
 
         /// <summary>
         /// Метод, который при первом запуске инициирует создание БД и записи администратора. 
@@ -31,6 +32,9 @@ namespace InfSec
                 currentDbPath = tempDbPath;
                 // создаём ADMIN только в новой базе
                 CreateAdminUser();
+                // Сохраняем и шифруем базу с новой солью
+                SaveChangesAndEncrypt(); // Это создаст зашифрованный файл с солью
+                Console.WriteLine("Новая зашифрованная база данных создана.");
             }
             else
             {
@@ -329,6 +333,7 @@ namespace InfSec
 
         /// <summary>
         /// Метод расшифрования базы данных с использованием алгоритма DES в режиме ECB.
+        /// Считывает соль из начала зашифрованного файла.
         /// </summary>
         /// <returns>True, если расшифровка успешна, иначе False</returns>
         private static bool DecryptDatabase()
@@ -346,21 +351,44 @@ namespace InfSec
                 }
 
                 byte[] encryptedBytes = File.ReadAllBytes(encryptedDbPath);
-                byte[] decryptedBytes = DecryptData(encryptedBytes);
+
+                // Проверяем длину файла (должна быть >= размеру соли)
+                if (encryptedBytes.Length < SALT_SIZE)
+                {
+                    Console.WriteLine("Ошибка: Зашифрованный файл слишком короткий.");
+                    return false;
+                }
+
+                // Читаем соль из начала файла
+                byte[] salt = new byte[SALT_SIZE];
+                Array.Copy(encryptedBytes, 0, salt, 0, SALT_SIZE);
+
+                // Остальная часть - зашифрованные данные
+                int dataLength = encryptedBytes.Length - SALT_SIZE;
+                byte[] encryptedData = new byte[dataLength];
+                Array.Copy(encryptedBytes, SALT_SIZE, encryptedData, 0, dataLength);
+
+                // Генерируем ключ, используя соль
+                byte[] key = GenerateKeyFromPhraseWithSalt(currentPasswordPhrase, salt);
+
+                // Расшифровываем данные
+                byte[] decryptedBytes = DecryptDataWithKey(encryptedData, key);
                 File.WriteAllBytes(tempDbPath, decryptedBytes);
 
                 currentDbPath = tempDbPath;
 
                 return true;
             }
-            catch
+            catch (Exception ex) // Лучше ловить конкретные исключения, например CryptographicException
             {
+                Console.WriteLine("Ошибка при расшифровке: " + ex.Message);
                 return false;
             }
         }
 
         /// <summary>
         /// Метод сохранения изменений и шифрования базы данных при завершении работы программы.
+        /// Генерирует случайную соль и добавляет её в начало зашифрованного файла.
         /// </summary>
         public static void SaveChangesAndEncrypt()
         {
@@ -368,17 +396,34 @@ namespace InfSec
             {
                 if (File.Exists(tempDbPath))
                 {
-                    // Шифруем temp_users.db в users_encrypted.db
+                    // Читаем содержимое временной базы
                     byte[] fileBytes = File.ReadAllBytes(tempDbPath);
-                    byte[] encryptedBytes = EncryptData(fileBytes);
-                    File.WriteAllBytes(encryptedDbPath, encryptedBytes);
 
-                    File.Delete(tempDbPath);
+                    // Генерируем случайную соль
+                    byte[] salt = GenerateRandomSalt();
+
+                    // Генерируем ключ, используя соль
+                    byte[] key = GenerateKeyFromPhraseWithSalt(currentPasswordPhrase, salt);
+
+                    // Шифруем данные
+                    byte[] encryptedData = EncryptDataWithKey(fileBytes, key);
+
+                    // Создаем общий массив: соль + зашифрованные данные
+                    byte[] finalEncryptedBytes = new byte[SALT_SIZE + encryptedData.Length];
+                    Array.Copy(salt, 0, finalEncryptedBytes, 0, SALT_SIZE);
+                    Array.Copy(encryptedData, 0, finalEncryptedBytes, SALT_SIZE, encryptedData.Length);
+
+                    // Записываем в зашифрованный файл
+                    File.WriteAllBytes(encryptedDbPath, finalEncryptedBytes);
+
+                    // Удаляем временную базу (если не нужно оставлять)
+                    // File.Delete(tempDbPath);
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Ошибка при сохранении: " + ex.Message);
+                throw; // Перебрасываем исключение, чтобы вызывающий код мог обработать его
             }
         }
 
@@ -387,15 +432,15 @@ namespace InfSec
         /// Метод шифрования данных с использованием алгоритма DES в режиме ECB.
         /// </summary>
         /// <param name="data">Данные для шифрования</param>
-        /// <returns>Зашифрованные данные</returns>
-        private static byte[] EncryptData(byte[] data)
+        /// <param name="key">Ключ шифрования</param>
+        /// <returns>Зашифрованные данные (без соли)</returns>
+        private static byte[] EncryptDataWithKey(byte[] data, byte[] key)
         {
-            byte[] key = GenerateKeyFromPhrase(currentPasswordPhrase);
             using (DESCryptoServiceProvider des = new DESCryptoServiceProvider())
             {
                 des.Mode = CipherMode.ECB;
                 des.Padding = PaddingMode.PKCS7;
-                using (ICryptoTransform encryptor = des.CreateEncryptor(key, new byte[8]))
+                using (ICryptoTransform encryptor = des.CreateEncryptor(key, new byte[8])) // IV не используется в ECB, но нужен для создания трансформа
                 {
                     return encryptor.TransformFinalBlock(data, 0, data.Length);
                 }
@@ -405,16 +450,16 @@ namespace InfSec
         /// <summary>
         /// Метод расшифрования данных с использованием алгоритма DES в режиме ECB.
         /// </summary>
-        /// <param name="encryptedData">Зашифрованные данные</param>
+        /// <param name="encryptedData">Зашифрованные данные (без соли)</param>
+        /// <param name="key">Ключ шифрования</param>
         /// <returns>Расшифрованные данные</returns>
-        private static byte[] DecryptData(byte[] encryptedData)
+        private static byte[] DecryptDataWithKey(byte[] encryptedData, byte[] key)
         {
-            byte[] key = GenerateKeyFromPhrase(currentPasswordPhrase);
             using (DESCryptoServiceProvider des = new DESCryptoServiceProvider())
             {
                 des.Mode = CipherMode.ECB;
                 des.Padding = PaddingMode.PKCS7;
-                using (ICryptoTransform decryptor = des.CreateDecryptor(key, new byte[8]))
+                using (ICryptoTransform decryptor = des.CreateDecryptor(key, new byte[8])) // IV не используется в ECB
                 {
                     return decryptor.TransformFinalBlock(encryptedData, 0, encryptedData.Length);
                 }
@@ -422,19 +467,44 @@ namespace InfSec
         }
 
         /// <summary>
-        /// Метод генерации ключа шифрования из парольной фразы.
+        /// Метод генерации случайной соли.
+        /// </summary>
+        /// <returns>Случайный массив байт заданного размера</returns>
+        private static byte[] GenerateRandomSalt()
+        {
+            byte[] salt = new byte[SALT_SIZE];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(salt);
+            }
+            return salt;
+        }
+
+        /// <summary>
+        /// Метод генерации ключа шифрования из парольной фразы и соли.
+        /// Простое объединение фразы и соли перед генерацией ключа.
         /// </summary>
         /// <param name="phrase">Парольная фраза</param>
+        /// <param name="salt">Соль</param>
         /// <returns>Ключ шифрования</returns>
-        private static byte[] GenerateKeyFromPhrase(string phrase)
+        private static byte[] GenerateKeyFromPhraseWithSalt(string phrase, byte[] salt)
         {
             byte[] phraseBytes = Encoding.UTF8.GetBytes(phrase);
-            byte[] key = new byte[8];
-            for (int i = 0; i < 8; i++)
+
+            // Объединяем фразу и соль (можно сделать иначе, например, через HMAC)
+            byte[] combined = new byte[phraseBytes.Length + salt.Length];
+            Array.Copy(phraseBytes, 0, combined, 0, phraseBytes.Length);
+            Array.Copy(salt, 0, combined, phraseBytes.Length, salt.Length);
+
+            // Вычисляем хэш объединенного значения
+            using (SHA256 sha256 = SHA256.Create())
             {
-                key[i] = i < phraseBytes.Length ? phraseBytes[i] : (byte)0;
+                byte[] hash = sha256.ComputeHash(combined);
+                // Берем первые 8 байт хэша как ключ (требование DES)
+                byte[] key = new byte[8];
+                Array.Copy(hash, 0, key, 0, Math.Min(8, hash.Length));
+                return key;
             }
-            return key;
         }
 
         /// <summary>
