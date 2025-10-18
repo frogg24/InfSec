@@ -416,8 +416,8 @@ namespace InfSec
                     // Записываем в зашифрованный файл
                     File.WriteAllBytes(encryptedDbPath, finalEncryptedBytes);
 
-                    // Удаляем временную базу (если не нужно оставлять)
-                    // File.Delete(tempDbPath);
+                    // Удаляем временную БД
+                    File.Delete(tempDbPath);
                 }
             }
             catch (Exception ex)

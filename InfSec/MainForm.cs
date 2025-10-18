@@ -296,6 +296,7 @@ namespace InfSec
             {
                 MessageBox.Show($"Ошибка при сохранении базы данных: {ex.Message}", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+            Application.Exit();
         }
     }
 }
