@@ -38,13 +38,13 @@
             настройкиToolStripMenuItem = new ToolStripMenuItem();
             menuChangeMinLength = new ToolStripMenuItem();
             menuChangeExpiry = new ToolStripMenuItem();
+            menuBlockUser = new ToolStripMenuItem();
+            menuSetRestrictions = new ToolStripMenuItem();
             справкаToolStripMenuItem = new ToolStripMenuItem();
             menuAbout = new ToolStripMenuItem();
             statusStrip1 = new StatusStrip();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
             lstUsers = new DataGridView();
-            menuBlockUser = new ToolStripMenuItem();
-            menuSetRestrictions = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)lstUsers).BeginInit();
@@ -124,6 +124,20 @@
             menuChangeExpiry.Text = "Изменить срок действия пароля";
             menuChangeExpiry.Click += menuChangeExpiry_Click;
             // 
+            // menuBlockUser
+            // 
+            menuBlockUser.Name = "menuBlockUser";
+            menuBlockUser.Size = new Size(402, 26);
+            menuBlockUser.Text = "Блокировать/разблокировать пользователя";
+            menuBlockUser.Click += menuBlockUser_Click;
+            // 
+            // menuSetRestrictions
+            // 
+            menuSetRestrictions.Name = "menuSetRestrictions";
+            menuSetRestrictions.Size = new Size(402, 26);
+            menuSetRestrictions.Text = "Установить/снять ограничения";
+            menuSetRestrictions.Click += menuSetRestrictions_Click;
+            // 
             // справкаToolStripMenuItem
             // 
             справкаToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { menuAbout });
@@ -170,20 +184,6 @@
             lstUsers.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             lstUsers.Size = new Size(893, 647);
             lstUsers.TabIndex = 2;
-            // 
-            // menuBlockUser
-            // 
-            menuBlockUser.Name = "menuBlockUser";
-            menuBlockUser.Size = new Size(402, 26);
-            menuBlockUser.Text = "Блокировать/разблокировать пользователя";
-            menuBlockUser.Click += this.menuBlockUser_Click;
-            // 
-            // menuSetRestrictions
-            // 
-            menuSetRestrictions.Name = "menuSetRestrictions";
-            menuSetRestrictions.Size = new Size(402, 26);
-            menuSetRestrictions.Text = "Установить ограничения";
-            menuSetRestrictions.Click += this.menuSetRestrictions_Click;
             // 
             // MainForm
             // 
