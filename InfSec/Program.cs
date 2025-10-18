@@ -20,7 +20,7 @@ namespace InfSec
                     {
                         string passwordPhrase = phraseForm.PasswordPhrase;
 
-                        // Инициализация базы данных
+                        // Инициализация базы данных с введенной парольной фразой
                         DatabaseManager.InitializeDatabase(passwordPhrase);
 
                         // Запускаем основную форму входа
@@ -36,8 +36,7 @@ namespace InfSec
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при запуске программы: {ex.Message}\n\nПопробуйте запустить программу заново.",
-                              "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Ошибка при запуске программы: {ex.Message}\n\nПопробуйте запустить программу заново.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 Application.Exit();
             }
         }

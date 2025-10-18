@@ -32,24 +32,26 @@ namespace InfSec
 
         private void btnOK_Click(object sender, EventArgs e)
         {
+            // Считывание и проверка параметра
             int value;
             if (!int.TryParse(newQuantity.Text, out value))
             {
                 MessageBox.Show("Введите корректное значение", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
             if (value < 0)
             {
                 MessageBox.Show("Значение не может быть отрицательным", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
+            // Передача параметра и закрытие формы
             Value = value;
             DialogResult = DialogResult.OK;
             Close();
         }
 
+        // Закрытие формы по клику
         private void btnCancel_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;

@@ -19,7 +19,7 @@ namespace InfSec
             UpdateStatus();
             LoadUsersList();
 
-            // Скрываем недоступные пункты меню для обычных пользователей
+            // Сокрытие недоступных пунктов меню для обычных пользователей
             if (!isAdmin)
             {
                 menuChangePassword.Enabled = true;
@@ -42,11 +42,15 @@ namespace InfSec
             }
         }
 
+        // Изменение отображения текущего пользователя
         private void UpdateStatus()
         {
             toolStripStatusLabel1.Text = $"Текущий пользователь: {currentUser}";
         }
 
+        /// <summary>
+        /// Метод для загрузки пользователей и настройка таблицы
+        /// </summary>
         private void LoadUsersList()
         {
             DataTable users = DatabaseManager.GetAllUsers();
@@ -61,11 +65,15 @@ namespace InfSec
             lstUsers.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
         }
 
+        // Закрытие приложения по клику
         private void menuExit_Click(object sender, EventArgs e)
         {
             Application.Exit();
         }
 
+        /// <summary>
+        /// Метод для отображения справчной информации
+        /// </summary>
         private void menuAbout_Click(object sender, EventArgs e)
         {
             MessageBox.Show(
@@ -79,6 +87,9 @@ namespace InfSec
                 MessageBoxIcon.Information);
         }
 
+        /// <summary>
+        /// Метод для смены пароля текущего пользователя
+        /// </summary>
         private void menuChangePassword_Click(object sender, EventArgs e)
         {
             ChangePasswordDialog changePwdDialog = new ChangePasswordDialog(currentUser);
@@ -88,6 +99,9 @@ namespace InfSec
             }
         }
 
+        /// <summary>
+        /// Метод для создания нового пользователя админитсратором
+        /// </summary>
         private void menuAddUser_Click(object sender, EventArgs e)
         {
             if (!isAdmin) return;
@@ -102,6 +116,9 @@ namespace InfSec
             }
         }
 
+        /// <summary>
+        /// Метод для простомтра всех пользователей по одному
+        /// </summary>
         private void menuViewUsers_Click(object sender, EventArgs e)
         {
             if (!isAdmin) return;
@@ -110,6 +127,9 @@ namespace InfSec
             viewUsersDialog.ShowDialog();
         }
 
+        /// <summary>
+        /// Метод для блокировки и разблокировки выделенного пользователя
+        /// </summary>
         private void menuBlockUser_Click(object sender, EventArgs e)
         {
             if (!isAdmin) return;
@@ -151,7 +171,9 @@ namespace InfSec
             }
         }
 
-
+        /// <summary>
+        /// Метод для включения и снятия ограничений на пароль для выделенного пользователя
+        /// </summary>
         private void menuSetRestrictions_Click(object sender, EventArgs e)
         {
             if (!isAdmin) return;
@@ -192,6 +214,9 @@ namespace InfSec
             }
         }
 
+        /// <summary>
+        /// Метод для задания минимальной длины пароля выделенного пользователя
+        /// </summary>
         private void menuChangeMinLength_Click(object sender, EventArgs e)
         {
             if (!isAdmin) return;
@@ -223,6 +248,9 @@ namespace InfSec
             }
         }
 
+        /// <summary>
+        /// Метод для задания срока действия пароля в месяцах для выделенного пользователя
+        /// </summary>
         private void menuChangeExpiry_Click(object sender, EventArgs e)
         {
             if (!isAdmin) return;
@@ -254,6 +282,9 @@ namespace InfSec
             }
         }
 
+        /// <summary>
+        /// Метод для звкрытия формы и приложения
+        /// </summary>
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             // При закрытии основной формы сохраняем изменения и шифруем базу данных

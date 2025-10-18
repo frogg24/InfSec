@@ -16,19 +16,25 @@ namespace InfSec
 
         private void btnOK_Click(object sender, EventArgs e)
         {
+            // Считывание парольной фразы
             string phrase = txtPasswordPhrase.Text.Trim();
 
+            // Проверка парольной фразы на пустоту
             if (string.IsNullOrEmpty(phrase))
             {
                 MessageBox.Show("Введите парольную фразу", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
+            // Запись введенной парольной фразы
             PasswordPhrase = phrase;
+
+            //Звкрытие формы
             DialogResult = DialogResult.OK;
             Close();
         }
 
+        // Закрытик формы по клику
         private void btnCancel_Click(object sender, EventArgs e)
         {
             Cancelled = true;

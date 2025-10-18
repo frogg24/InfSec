@@ -16,9 +16,15 @@ namespace InfSec
             LoadUsers();
         }
 
+        /// <summary>
+        /// Метод загрузки всех пользователей
+        /// </summary>
         private void LoadUsers()
         {
+            // Получение всех пользователей
             usersTable = DatabaseManager.GetAllUsers();
+
+            // Проверка на кол-во пользователей
             if (usersTable.Rows.Count > 0)
             {
                 DisplayUser(currentIndex);
@@ -32,7 +38,10 @@ namespace InfSec
                 lblExpiry.Text = "";
             }
         }
-
+        /// <summary>
+        /// Метод отображения пользователя
+        /// </summary>
+        /// <param name="index">Номер пользователя</param>
         private void DisplayUser(int index)
         {
             if (usersTable.Rows.Count <= 0) return;
@@ -45,6 +54,9 @@ namespace InfSec
             lblExpiry.Text = $"Срок действия: {row["expiry_months"]} месяцев";
         }
 
+        /// <summary>
+        /// Метод для отображения следующего пользователя
+        /// </summary>
         private void btnNext_Click(object sender, EventArgs e)
         {
             if (usersTable.Rows.Count > 0)
@@ -58,6 +70,9 @@ namespace InfSec
             }
         }
 
+        /// <summary>
+        /// Метод для отображения предыдущего пользователя
+        /// </summary>
         private void btnPrev_Click(object sender, EventArgs e)
         {
             if (usersTable.Rows.Count > 0)
@@ -71,6 +86,7 @@ namespace InfSec
             }
         }
 
+        // Закрытие формы по клику
         private void btnClose_Click(object sender, EventArgs e)
         {
             Close();

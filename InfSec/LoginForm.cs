@@ -14,9 +14,9 @@ namespace InfSec
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
+            // Считывание и проверка имени и пароля
             string username = txtUsername.Text.Trim();
             string password = txtPassword.Text;
-
             if (string.IsNullOrEmpty(username))
             {
                 MessageBox.Show("Введите имя пользователя", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -105,17 +105,20 @@ namespace InfSec
                 }
             }
         }
-
+        /// <summary>
+        /// Метод для задания пароля администратору при первом входе
+        /// </summary>
         private void SetPasswordForAdmin()
         {
             PasswordDialog pwdDialog = new PasswordDialog();
             if (pwdDialog.ShowDialog() == DialogResult.OK)
             {
+                // Получение и установка пароля
                 string newPassword = pwdDialog.NewPassword;
                 DatabaseManager.SetUserPassword("ADMIN", newPassword);
                 MessageBox.Show("Пароль администратора установлен", "Успех", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                // Пытаемся войти с новым паролем
+                // Попытка войти с новым паролем
                 if (DatabaseManager.ValidateUser("ADMIN", newPassword))
                 {
                     MainForm mainForm = new MainForm("ADMIN");
@@ -143,7 +146,7 @@ namespace InfSec
             }
             catch (Exception ex)
             {
-                // Игнорируем ошибки сохранения при закрытии, так как это нормально
+                // Игнорируем ошибки сохранения при закрытии
                 Console.WriteLine("Ошибка при сохранении данных: " + ex.Message);
             }
         }

@@ -9,12 +9,17 @@ namespace InfSec
 {
     public static class DatabaseManager
     {
-        private static string dbPath = "users.db";
         private static string encryptedDbPath = "users_encrypted.db";
         private static string tempDbPath = "temp_users.db";
         private static string currentDbPath = "";
         private static string currentPasswordPhrase = "";
 
+        /// <summary>
+        /// Метод, который при первом запуске инициирует создание БД и записи администратора. 
+        /// При последующих запусках метод расшифрует существующую БД и проверит
+        /// начилие записи администратора
+        /// </summary>
+        /// <param name="passwordPhrase">Введенная пользователем парольная фраза</param>
         public static void InitializeDatabase(string passwordPhrase)
         {
             currentPasswordPhrase = passwordPhrase;
@@ -24,14 +29,13 @@ namespace InfSec
                 // Первый запуск
                 CreateDatabase(tempDbPath);
                 currentDbPath = tempDbPath;
-                EnsureUsersTable();
-                CreateAdminUser(); // создаём ADMIN только в новой базе
+                // создаём ADMIN только в новой базе
+                CreateAdminUser();
             }
             else
             {
                 // Повторный запуск: расшифровка
-                if (!DecryptDatabase())
-                    throw new Exception("Неверная парольная фраза");
+                if (!DecryptDatabase()) throw new Exception("Неверная парольная фраза");
 
                 currentDbPath = tempDbPath;
 
@@ -43,7 +47,10 @@ namespace InfSec
             }
         }
 
-
+        /// <summary>
+        /// Метод создания БД с единственной сущностью User
+        /// </summary>
+        /// <param name="path">Путь для сохранения БД</param>
         private static void CreateDatabase(string path)
         {
             if (File.Exists(path)) File.Delete(path);
@@ -52,8 +59,7 @@ namespace InfSec
             using (var connection = new SQLiteConnection($"Data Source={path};Version=3;"))
             {
                 connection.Open();
-                string createTableSql = @"
-                    CREATE TABLE IF NOT EXISTS users (
+                string createTableSql = @"CREATE TABLE IF NOT EXISTS users (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         username TEXT UNIQUE NOT NULL,
                         password_hash TEXT,
@@ -66,24 +72,9 @@ namespace InfSec
             }
         }
 
-        private static void EnsureUsersTable()
-        {
-            using (var connection = new SQLiteConnection($"Data Source={currentDbPath};Version=3;"))
-            {
-                connection.Open();
-                string sql = @"CREATE TABLE IF NOT EXISTS users (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        username TEXT UNIQUE NOT NULL,
-                        password_hash TEXT,
-                        blocked BOOLEAN DEFAULT 0,
-                        restrictions_enabled BOOLEAN DEFAULT 0,
-                        min_length INTEGER DEFAULT 0,
-                        expiry_months INTEGER DEFAULT 0
-                    )";
-                using (var command = new SQLiteCommand(sql, connection)) command.ExecuteNonQuery();
-            }
-        }
-
+        /// <summary>
+        /// Метод для создания пользователя ADMIN, если он не существует
+        /// </summary>
         public static void CreateAdminUser()
         {
             using (var connection = new SQLiteConnection($"Data Source={currentDbPath};Version=3;"))
@@ -96,7 +87,13 @@ namespace InfSec
             }
         }
 
-
+        /// <summary>
+        /// Метод проверки правильности пароля пользователя для входа
+        /// Введенный пароля, хэширутеся и сравнивается с хэшем в БД
+        /// </summary>
+        /// <param name="username">Имя пользователя</param>
+        /// <param name="password">Введенный пароль</param>
+        /// <returns>True, если пароль верен, иначе - False</returns>
         public static bool ValidateUser(string username, string password)
         {
             using (var connection = new SQLiteConnection($"Data Source={currentDbPath};Version=3;"))
@@ -111,13 +108,13 @@ namespace InfSec
                     // Если в базе null, трактуем это как пустую строку
                     string storedHash = result == null || result == DBNull.Value ? "" : result.ToString();
 
-                    // Если пароль пустой → вход разрешён только при пустом хэше
+                    // Если пароль пустой вход разрешён только при пустом хэше
                     if (string.IsNullOrEmpty(password))
                     {
                         return string.IsNullOrEmpty(storedHash);
                     }
 
-                    // Проверяем хэш
+                    // Проверка хэша
                     string inputHash = ComputeMD5Hash(password);
                     return storedHash == inputHash;
                 }
@@ -125,6 +122,11 @@ namespace InfSec
         }
 
 
+        /// <summary>
+        /// Метод проверки изменения пароля пользователя для входа
+        /// </summary>
+        /// <param name="username">Имя пользователя</param>
+        /// <param name="password">Новый пароль</param>
         public static void SetUserPassword(string username, string password)
         {
             using (var connection = new SQLiteConnection($"Data Source={currentDbPath};Version=3;"))
@@ -140,6 +142,10 @@ namespace InfSec
             }
         }
 
+        /// <summary>
+        /// Метод для получения всех пользователей
+        /// </summary>
+        /// <returns>DataTable -  список пользователей</returns>
         public static DataTable GetAllUsers()
         {
             DataTable dt = new DataTable();
@@ -153,6 +159,11 @@ namespace InfSec
             return dt;
         }
 
+        /// <summary>
+        /// Метод проверки на существование пользователя с таким именем пользователя
+        /// </summary>
+        /// <param name="username">Имя пользователя</param>
+        /// <returns>True, если пользователя существует, иначе - False</returns>
         public static bool UserExists(string username)
         {
             using (var connection = new SQLiteConnection($"Data Source={currentDbPath};Version=3;"))
@@ -168,6 +179,11 @@ namespace InfSec
             }
         }
 
+        /// <summary>
+        /// Метод добавления пользователя в БД с пустым паролем
+        /// </summary>
+        /// <param name="username">Имя пользователя</param>
+        /// <returns>True, если пароль верен, иначе - False</returns>
         public static void AddUser(string username)
         {
             using (var connection = new SQLiteConnection($"Data Source={currentDbPath};Version=3;"))
@@ -183,6 +199,11 @@ namespace InfSec
         }
 
 
+        /// <summary>
+        /// Метод проверки заюлокирован пользователь или нет по имени пользователя
+        /// </summary>
+        /// <param name="username">Имя пользователя</param>
+        /// <returns>True, если пользователь заблокирован, иначе - False</returns>
         public static bool IsUserBlocked(string username)
         {
             using (var connection = new SQLiteConnection($"Data Source={currentDbPath};Version=3;"))
@@ -200,6 +221,11 @@ namespace InfSec
             }
         }
 
+        /// <summary>
+        /// Метод блокировки/разблокировки пользователя
+        /// </summary>
+        /// <param name="username">Имя пользователя</param>
+        /// <param name="blocked">Поле, указывающее заблокировать или разблокировать</param>
         public static void SetUserBlocked(string username, bool blocked)
         {
             using (var connection = new SQLiteConnection($"Data Source={currentDbPath};Version=3;"))
@@ -215,6 +241,12 @@ namespace InfSec
             }
         }
 
+
+        /// <summary>
+        /// Метод включения/выключения проверки на ограничения для задания пароля
+        /// </summary>
+        /// <param name="username">Имя пользователя</param>
+        /// <param name="enabled">Поле,отображающее включить ограничения или снять</param>
         public static void SetUserRestrictions(string username, bool enabled)
         {
             using (var connection = new SQLiteConnection($"Data Source={currentDbPath};Version=3;"))
@@ -230,6 +262,11 @@ namespace InfSec
             }
         }
 
+        /// <summary>
+        /// Метод проверки включены ли ограничения на пароля для пользователя
+        /// </summary>
+        /// <param name="username">Имя пользователя</param>
+        /// <returns>True, если ограничения для пользователя включены, иначе - False</returns>
         public static bool GetUserRestrictions(string username)
         {
             using (var connection = new SQLiteConnection($"Data Source={currentDbPath};Version=3;"))
@@ -247,6 +284,12 @@ namespace InfSec
             }
         }
 
+        /// <summary>
+        /// Метод пзадания минимальной длины пароля для пользователя
+        /// </summary>
+        /// <param name="username">Имя пользователя</param>
+        /// <param name="minLength">Новая минимальная длина пароля</param>
+        /// <returns>True, если пароль верен, иначе - False</returns>
         public static void SetUserMinLength(string username, int minLength)
         {
             using (var connection = new SQLiteConnection($"Data Source={currentDbPath};Version=3;"))
@@ -262,6 +305,13 @@ namespace InfSec
             }
         }
 
+        /// <summary>
+        /// Метод проверки правильности пароля полязователя для входа
+        /// Введенный пароля, хэширутеся и сравнивается с хэшем в БД
+        /// </summary>
+        /// <param name="username">Имя пользователя</param>
+        /// <param name="password">Введенный пароль</param>
+        /// <returns>True, если пароль верен, иначе - False</returns>
         public static void SetUserExpiry(string username, int expiryMonths)
         {
             using (var connection = new SQLiteConnection($"Data Source={currentDbPath};Version=3;"))
@@ -277,26 +327,10 @@ namespace InfSec
             }
         }
 
-        private static void EncryptDatabase()
-        {
-            try
-            {
-                if (!File.Exists(dbPath))
-                {
-                    throw new Exception("Файл базы данных не существует");
-                }
-
-                byte[] fileBytes = File.ReadAllBytes(dbPath);
-                byte[] encryptedBytes = EncryptData(fileBytes);
-                File.WriteAllBytes(encryptedDbPath, encryptedBytes);
-                File.Delete(dbPath);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Ошибка шифрования базы данных: " + ex.Message);
-            }
-        }
-
+        /// <summary>
+        /// Метод расшифрования базы данных с использованием алгоритма DES в режиме ECB.
+        /// </summary>
+        /// <returns>True, если расшифровка успешна, иначе False</returns>
         private static bool DecryptDatabase()
         {
             try
@@ -325,7 +359,9 @@ namespace InfSec
             }
         }
 
-
+        /// <summary>
+        /// Метод сохранения изменений и шифрования базы данных при завершении работы программы.
+        /// </summary>
         public static void SaveChangesAndEncrypt()
         {
             try
@@ -337,7 +373,6 @@ namespace InfSec
                     byte[] encryptedBytes = EncryptData(fileBytes);
                     File.WriteAllBytes(encryptedDbPath, encryptedBytes);
 
-                    // Удаляем temp только В МОМЕНТ ВЫХОДА (мы вызываем этот метод в FormClosing).
                     File.Delete(tempDbPath);
                 }
             }
@@ -348,7 +383,11 @@ namespace InfSec
         }
 
 
-
+        /// <summary>
+        /// Метод шифрования данных с использованием алгоритма DES в режиме ECB.
+        /// </summary>
+        /// <param name="data">Данные для шифрования</param>
+        /// <returns>Зашифрованные данные</returns>
         private static byte[] EncryptData(byte[] data)
         {
             byte[] key = GenerateKeyFromPhrase(currentPasswordPhrase);
@@ -363,6 +402,11 @@ namespace InfSec
             }
         }
 
+        /// <summary>
+        /// Метод расшифрования данных с использованием алгоритма DES в режиме ECB.
+        /// </summary>
+        /// <param name="encryptedData">Зашифрованные данные</param>
+        /// <returns>Расшифрованные данные</returns>
         private static byte[] DecryptData(byte[] encryptedData)
         {
             byte[] key = GenerateKeyFromPhrase(currentPasswordPhrase);
@@ -377,15 +421,27 @@ namespace InfSec
             }
         }
 
+        /// <summary>
+        /// Метод генерации ключа шифрования из парольной фразы.
+        /// </summary>
+        /// <param name="phrase">Парольная фраза</param>
+        /// <returns>Ключ шифрования</returns>
         private static byte[] GenerateKeyFromPhrase(string phrase)
         {
             byte[] phraseBytes = Encoding.UTF8.GetBytes(phrase);
             byte[] key = new byte[8];
             for (int i = 0; i < 8; i++)
+            {
                 key[i] = i < phraseBytes.Length ? phraseBytes[i] : (byte)0;
+            }
             return key;
         }
 
+        /// <summary>
+        /// Метод вычисления хэша MD5 для пароля.
+        /// </summary>
+        /// <param name="input">Входная строка</param>
+        /// <returns>Хэш в виде строки</returns>
         private static string ComputeMD5Hash(string input)
         {
             using (MD5 md5 = MD5.Create())
@@ -398,6 +454,11 @@ namespace InfSec
             }
         }
 
+        /// <summary>
+        /// Метод получения минимальной длины пароля для пользователя.
+        /// </summary>
+        /// <param name="username">Имя пользователя</param>
+        /// <returns>Минимальная длина пароля</returns>
         public static int GetUserMinLength(string username)
         {
             using (var connection = new SQLiteConnection($"Data Source={currentDbPath};Version=3;"))

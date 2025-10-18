@@ -16,37 +16,37 @@ namespace InfSec
 
         private void btnOK_Click(object sender, EventArgs e)
         {
+            // Запись паролей
             string oldPassword = txtOldPassword.Text;
             string newPassword1 = txtNewPassword1.Text;
             string newPassword2 = txtNewPassword2.Text;
 
-            // Проверяем старый пароль
+            // Если поля заполнены не верно
             if (!DatabaseManager.ValidateUser(username, oldPassword))
             {
                 MessageBox.Show("Неверный старый пароль", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
             if (string.IsNullOrEmpty(newPassword1))
             {
                 MessageBox.Show("Введите новый пароль", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
             if (newPassword1 != newPassword2)
             {
                 MessageBox.Show("Новые пароли не совпадают", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            int minLength = DatabaseManager.GetUserMinLength(username);
             // Проверяем, если минимальная длина больше нуля, то проверяем длину нового пароля
+            int minLength = DatabaseManager.GetUserMinLength(username);
             if (minLength > 0 && newPassword1.Length < minLength)
             {
                 MessageBox.Show($"Пароль должен быть не короче {minLength} символов", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
+            // Если ограничения на пароль включены для пользователя
             if (DatabaseManager.GetUserRestrictions(username))
             {
                 // Проверяем требования к паролю
@@ -60,12 +60,20 @@ namespace InfSec
                     return;
                 }
             }
-
+            
+            // Запись нового пароля
             DatabaseManager.SetUserPassword(username, newPassword1);
+
+            // Закрытие формы
             DialogResult = DialogResult.OK;
             Close();
         }
 
+        /// <summary>
+        /// Метод валидации пароля по индивидуальному заданию
+        /// </summary>
+        /// <param name="password">Пароль для валидации</param>
+        /// <returns>True, есди пароль прошел валидацию, иначе - False</returns>
         private bool ValidatePasswordRequirements(string password)
         {
             // Проверяем наличие цифр
@@ -104,6 +112,7 @@ namespace InfSec
             return hasDigits && hasPunctuation && hasArithmetic;
         }
 
+        // Закрытие формы по клику
         private void btnCancel_Click(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;
