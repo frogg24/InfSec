@@ -5,6 +5,7 @@ namespace InfSec
 {
     public partial class LoginForm : Form
     {
+        private int tries;
         public LoginForm()
         {
             InitializeComponent();
@@ -57,6 +58,12 @@ namespace InfSec
                     else
                     {
                         MessageBox.Show("Неверный пароль администратора", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        tries++;
+                        if (tries == 3)
+                        {
+                            MessageBox.Show("Пароль введен неверно три раза!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            Application.Exit();
+                        }
                         return;
                     }
                 }
@@ -88,6 +95,12 @@ namespace InfSec
                 else
                 {
                     MessageBox.Show("Неверный пароль", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    tries++;
+                    if (tries == 3)
+                    {
+                        MessageBox.Show("Пароль введен неверно три раза!", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        Application.Exit();
+                    }
                     return;
                 }
             }

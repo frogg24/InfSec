@@ -23,12 +23,12 @@ namespace InfSec
             if (!isAdmin)
             {
                 menuChangePassword.Enabled = true;
-                menuAddUser.Visible = false;
-                menuViewUsers.Visible = false;
-                menuBlockUser.Visible = false;
-                menuSetRestrictions.Visible = false;
-                menuChangeMinLength.Visible = false;
-                menuChangeExpiry.Visible = false;
+                menuAddUser.Enabled = false;
+                menuViewUsers.Enabled = false;
+                menuBlockUser.Enabled = false;
+                menuSetRestrictions.Enabled = false;
+                menuChangeMinLength.Enabled = false;
+                menuChangeExpiry.Enabled = false;
             }
             else
             {
