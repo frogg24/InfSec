@@ -53,6 +53,10 @@ namespace InfSec
         /// </summary>
         private void LoadUsersList()
         {
+            if (!string.Equals(currentUser, "ADMIN"))
+            {
+                return;
+            }
             DataTable users = DatabaseManager.GetAllUsers();
             lstUsers.DataSource = users;
             lstUsers.Columns["username"].HeaderText = "Имя пользователя";
